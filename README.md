@@ -63,10 +63,32 @@
 
 ## 실행 방법
 
+### 1. 데이터 정제
+
 ```bash
 pip install pandas
 python scripts/clean_facility_data.py
 ```
+
+### 2. MySQL import (SSH 터널 환경)
+
+서버 DB에 직접 접근이 불가한 경우 SSH 터널을 먼저 열고 실행한다.
+
+```bash
+# 1) config.example.py를 config.py로 복사 후 실제 값 입력
+cp scripts/config.example.py scripts/config.py
+
+# 2) SSH 터널 열기 (로컬 포트 → 서버 3306)
+ssh -L <로컬포트>:localhost:3306 user@your-server -N &
+
+# 3) import 실행
+pip install pymysql
+python scripts/import_to_server_mysql.py
+```
+
+- `scripts/config.py`는 `.gitignore`에 등록되어 커밋되지 않음
+- 실행 시 `trash_bins`, `toilets` 테이블을 **TRUNCATE** 후 전체 재삽입
+- 1,000건 단위 배치 insert, 실패 시 rollback 처리
 
 ## 데이터 한계 및 향후 과제
 
